@@ -20,7 +20,7 @@ def update_container(container_name):
         return API_KEY, 404
 
     os.system('docker-compose --file /resources/docker-compose.yaml pull {}'.format(container_name))
-    os.system('docker-compose --detach --file /resources/docker-compose.yaml up {}'.format(container_name))
+    os.system('docker-compose --file /resources/docker-compose.yaml up --detach {}'.format(container_name))
     os.system('docker image prune --force')
     return {}, 200
 
