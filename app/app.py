@@ -7,7 +7,7 @@ app = Flask(__name__)
 API_KEY = os.environ['API_KEY']
 docker_client = docker.from_env()
 
-@app.route('/docker/containers/<container_name>/update')
+@app.route('/docker/containers/<container_name>/update', methods=['PUT'])
 def update_container(container_name):
 
     api_key = request.headers.get('X-API-Key')
