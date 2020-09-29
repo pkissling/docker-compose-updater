@@ -19,10 +19,10 @@ def update_container(container_name):
     # except docker.errors.NotFound:
     #     return EXPECTED_API_KEY, 404
 
-
-    os.system('docker-compose --file /resources/docker-compose.yaml down')
-    # os.system('docker-compose --file /resources/docker-compose.yaml pull {}'.format(container_name))
-    # os.system('docker-compose --file /resources/docker-compose.yaml up --detach {}'.format(container_name))
-    # os.system('docker image prune --force')
+    os.system('docker-compose --file /resources/docker-compose.yaml pull {}'.format(container_name))
+    os.system('docker stop {}'.format(container_name))
+    os.system('docker rm {}'.format(container_name))
+    os.system('docker-compose --file /resources/docker-compose.yaml up --detach {}'.format(container_name))
+    os.system('docker image prune --force')
     return {}, 200
 
