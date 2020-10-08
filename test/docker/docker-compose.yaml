@@ -7,8 +7,8 @@ services:
     container_name: hello-world
     image: hello-world:latest
 
-  home-assistant-updater:
-    container_name: home-assistant-updater
+  docker-compose-updater:
+    container_name: docker-compose-updater
     build: https://github.com/pkissling/home-assistant-updater.git
     ports:
       - 5000:5000

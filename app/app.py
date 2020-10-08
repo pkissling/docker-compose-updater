@@ -32,4 +32,3 @@ def update_container(container_name):
     logging.info('END update_container. container_name: %s', container_name)
 
     return {}, 200
-
