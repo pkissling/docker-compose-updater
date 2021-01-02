@@ -25,8 +25,8 @@ def update_container(container_name):
         logging.warn('Container [%s] not found', container_name)
         return EXPECTED_API_KEY, 404
 
-    os.system('docker-compose --file /docker/docker-compose.yaml pull {}'.format(container_name))
-    os.system('docker-compose --file /docker/docker-compose.yaml up --detach {}'.format(container_name))
+    os.system('docker-compose --file /docker/home-assistant.yaml pull {}'.format(container_name))
+    os.system('docker-compose --file /docker/home-assistant.yaml up --detach {}'.format(container_name))
     os.system('docker image prune --force')
 
     logging.info('END update_container. container_name: %s', container_name)
