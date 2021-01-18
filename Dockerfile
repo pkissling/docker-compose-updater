@@ -1,12 +1,34 @@
-FROM python:3-alpine3.12
+FROM --platform=$BUILDPLATFORM rust:1-slim-buster AS cargo-init
+ENV USER=root
+WORKDIR /code
+RUN cargo init
+COPY Cargo.toml /code/Cargo.toml
+COPY Cargo.lock /code/Cargo.lock
+RUN mkdir -p /code/.cargo \
+  && cargo vendor > /code/.cargo/config
 
-RUN apk update
-RUN apk add --no-cache docker-cli docker-compose
+FROM rust:1-slim-buster as cargo-install
+WORKDIR /code
+COPY --from=cargo-init /code/.cargo /code/.cargo
+COPY --from=cargo-init /code/vendor /code/vendor
+COPY src/ /code/src/
+COPY Cargo.toml /code/Cargo.toml
+COPY Cargo.lock /code/Cargo.lock
+RUN rustup update nightly
+RUN rustup override set nightly
+RUN cargo install --offline --path .
 
-COPY ./app /app
-WORKDIR /app
-RUN pip install -r requirements.txt
-
-EXPOSE 8080/tcp
-
-CMD ["flask", "run", "-h", "0.0.0.0", "-p", "5000"]
+FROM debian:buster-slim
+RUN apt-get update
+RUN apt-get update &&\
+      apt-get install -y curl
+RUN export ARCH=$(dpkg --print-architecture) && \
+      curl \
+      --silent \
+      --insecure \
+      --output /tmp/docker-ce-cli.deb \
+      https://download.docker.com/linux/debian/dists/buster/pool/stable/${ARCH}/docker-ce-cli_20.10.2~3-0~debian-buster_${ARCH}.deb
+RUN dpkg -i /tmp/docker-ce-cli.deb
+RUN rm /tmp/docker-ce-cli.deb
+COPY --from=cargo-install /usr/local/cargo/bin/docker-compose-updater /usr/local/bin/docker-compose-updater
+ENTRYPOINT ["docker-compose-updater"]
