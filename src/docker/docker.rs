@@ -9,14 +9,14 @@ impl Docker {
 
     pub fn connect(socket: &str) -> std::io::Result<Self> {
         let s = Socket::new(socket)?;
-        Ok(Docker::new(s)?)
+        Ok(Docker::new(s))
     }
 
-    fn new(mut socket: Socket) -> std::io::Result<Self> {
-        let response = test_socket(&mut socket)?;
-        assert!(response.is_success());
-
-        Ok(Docker { socket })
+    fn new(socket: Socket) -> Self {
+        match can_access(&socket) {
+            true => Docker { socket },
+            false => panic!("docker.sock not accessible!")
+        }
     }
 
     pub fn get_containers(self) -> std::io::Result<Response> {
@@ -24,6 +24,7 @@ impl Docker {
     }
 }
 
-fn test_socket(socket: &Socket) -> std::io::Result<Response> {
-    socket.get("/containers")
+fn can_access(socket: &Socket) -> bool {
+    let result = socket.get("/containers");
+    result.map_or(false, |r| r.is_success())
 }
