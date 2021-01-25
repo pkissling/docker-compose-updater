@@ -1,14 +1,10 @@
 use std::collections::HashMap;
-use std::os::macos::raw::stat;
-use std::path::Iter;
-use std::iter::TakeWhile;
-use std::str::Lines;
-use rocket::http::ext::IntoCollection;
-use std::ops::Add;
 
 pub struct Response {
     status_code: i16,
+    #[allow(dead_code)]
     headers: HashMap<String, String>,
+    #[allow(dead_code)]
     body: String,
 }
 

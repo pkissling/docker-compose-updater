@@ -22,6 +22,7 @@ impl Socket {
         self.send(path)
     }
 
+    #[allow(dead_code)]
     pub fn post(&self, path: String) -> std::io::Result<Response> {
         let path = format!("POST {}", path);
         self.send(path)

@@ -2,6 +2,7 @@ use crate::docker::socket::Socket;
 use crate::docker::response::Response;
 
 pub struct Docker {
+    #[allow(dead_code)]
     socket: Socket
 }
 
@@ -19,6 +20,7 @@ impl Docker {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_containers(self) -> std::io::Result<Response> {
         self.socket.get("/containers")
     }
