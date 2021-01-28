@@ -42,7 +42,7 @@ impl Response {
         }
     }
 
-    pub fn is_success(&self) -> bool {
+    pub fn _is_success(&self) -> bool {
         return self.status_code < 300
     }
 }

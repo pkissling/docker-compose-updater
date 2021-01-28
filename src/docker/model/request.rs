@@ -1,6 +1,3 @@
-use std::fmt::{Display, Formatter};
-use std::fmt;
-use std::iter::Map;
 use std::collections::HashMap;
 
 pub struct RequestBuilder {
@@ -67,6 +64,7 @@ impl RequestBuilder {
         self
     }
 
+    #[allow(dead_code)]
     pub fn header(mut self, key: String, value: String) -> RequestBuilder {
         self.headers.insert(key, value);
         self

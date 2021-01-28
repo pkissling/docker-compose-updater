@@ -18,7 +18,7 @@ impl Socket {
         Ok(Socket { stream })
     }
 
-    pub fn get(mut self, path: &str) -> std::io::Result<Response> {
+    pub fn get(&self, path: &str) -> std::io::Result<Response> {
         let request = RequestBuilder::get()
             .path(path)
             .build();
@@ -27,7 +27,7 @@ impl Socket {
     }
 
     #[allow(dead_code)]
-    pub fn post(mut self, path: &str) -> std::io::Result<Response> {
+    pub fn post(&self, path: &str) -> std::io::Result<Response> {
         let request = RequestBuilder::post()
             .path(path)
             .json()
