@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt;
 
 pub struct Response {
     status_code: i16,
@@ -6,6 +7,12 @@ pub struct Response {
     headers: HashMap<String, String>,
     #[allow(dead_code)]
     body: String,
+}
+
+impl fmt::Display for Response {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Status [{}]\nBody:\n{}", self.status_code, self.body)
+    }
 }
 
 impl Response {

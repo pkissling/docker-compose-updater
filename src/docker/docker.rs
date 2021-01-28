@@ -1,5 +1,5 @@
 use crate::docker::socket::Socket;
-use crate::docker::response::Response;
+use crate::docker::model::response::Response;
 
 pub struct Docker {
     #[allow(dead_code)]
@@ -14,19 +14,23 @@ impl Docker {
     }
 
     fn new(socket: Socket) -> Self {
-        match can_access(&socket) {
-            true => Docker { socket },
-            false => panic!("docker.sock not accessible!")
-        }
+        Docker { socket }
+        // match can_access(&socket) {
+        //     true => Docker { socket },
+        //     false => panic!("docker.sock not accessible!")
+        // }
     }
 
     #[allow(dead_code)]
     pub fn get_containers(self) -> std::io::Result<Response> {
-        self.socket.get("/containers")
+        self.socket.get("/containers/json")
     }
 }
 
-fn can_access(socket: &Socket) -> bool {
-    let result = socket.get("/containers");
-    result.map_or(false, |r| r.is_success())
-}
+// fn can_access(socket: &Socket) -> bool { // TODO return std::io::Result<Response>?
+//     let result = socket.get("/ping");
+//     match result {
+//         Ok(_) => true,
+//         Err(_) => false
+//     }
+// }

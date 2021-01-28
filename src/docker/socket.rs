@@ -1,6 +1,7 @@
 use std::{os::unix::net::UnixStream};
 use std::io::prelude::*;
-use crate::docker::response::Response;
+use crate::docker::model::response::Response;
+use crate::docker::model::request::{Request, RequestBuilder};
 
 pub struct Socket {
     stream: UnixStream
@@ -17,30 +18,30 @@ impl Socket {
         Ok(Socket { stream })
     }
 
-    pub fn get(&self, path: &str) -> std::io::Result<Response> {
-        let path = format!("GET {}", path);
-        self.send(path)
+    pub fn get(mut self, path: &str) -> std::io::Result<Response> {
+        let request = RequestBuilder::get()
+            .path(path)
+            .build();
+
+        self.send(request)
     }
 
     #[allow(dead_code)]
-    pub fn post(&self, path: String) -> std::io::Result<Response> {
-        let path = format!("POST {}", path);
-        self.send(path)
+    pub fn post(mut self, path: &str) -> std::io::Result<Response> {
+        let request = RequestBuilder::post()
+            .path(path)
+            .json()
+            .build();
+
+        self.send(request)
     }
 
-    fn send(&self, mut request: String) -> std::io::Result<Response> {
-        append_data_format(&mut request);
-        append_protocol(&mut request);
-        append_newline(&mut request);
-        append_host_header(&mut request);
-        append_newline(&mut request);
-
-        let request = "GET /containers/json HTTP/1.1\nHost: localhost\n\n";
+    fn send(&self, request: Request) -> std::io::Result<Response> {
         println!("Request:");
-        println!("{}", request);
+        println!("{}", request.to_string()); // impl format
 
-        let mut stream = self.stream.try_clone().unwrap(); // TODO
-        stream.write_all(request.as_bytes())?;
+        let mut stream = self.stream.try_clone().unwrap(); // TODO looks hacky
+        stream.write_all(request.to_string().as_bytes())?; // TODO impl TODO
 
         const BUFFER_SIZE: usize = 1024;
         let mut buffer: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
@@ -52,21 +53,4 @@ impl Socket {
 
         Ok(Response::new(response))
     }
-}
-
-
-fn append_data_format(payload: &mut String) {
-    payload.push_str("/json");
-
-}
-fn append_protocol(payload: &mut String) {
-    payload.push_str(" HTTP/1.1");
-}
-
-fn append_newline(payload: &mut String) {
-    payload.push_str("\n");
-}
-
-fn append_host_header(payload: &mut String) {
-    payload.push_str("Host: localhost\n");
 }

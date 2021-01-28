@@ -35,5 +35,7 @@ fn ensure_preconditions() {
     env_vars::expected_api_key();
 
     // check if docker socket is available and accessible
-    Docker::connect("/var/run/docker.sock").unwrap();
+    let d = Docker::connect("/var/run/docker.sock").unwrap();
+    let response = d.get_containers().unwrap();
+    println!("{}", response)
 }
