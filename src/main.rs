@@ -12,6 +12,7 @@ extern crate rocket;
 use docker::docker::Docker;
 use rocket::config::{Config, Environment};
 use crate::config::env_vars;
+use crate::services::container_service::ContainerService;
 
 fn main() {
     ensure_preconditions();
@@ -35,7 +36,8 @@ fn ensure_preconditions() {
     env_vars::expected_api_key();
 
     // check if docker socket is available and accessible
-    let d = Docker::connect("/var/run/docker.sock").unwrap();
-    let response = d.get_containers().unwrap();
-    println!("{}", response)
+    let docker = Docker::connect("/var/run/docker.sock").unwrap();
+    let service = ContainerService::new(docker);
+    let exists = service.container_exists("kind_dhawan".to_string());
+    println!("exists {}", exists)
 }

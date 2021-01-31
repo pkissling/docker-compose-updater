@@ -1,7 +1,9 @@
 use std::{os::unix::net::UnixStream};
 use std::io::prelude::*;
-use crate::docker::model::response::Response;
+use std::time::Duration;
+
 use crate::docker::model::request::{Request, RequestBuilder};
+use crate::docker::model::response::Response;
 
 pub struct Socket {
     stream: UnixStream
@@ -15,6 +17,11 @@ impl Socket {
         // }
 
         let stream = UnixStream::connect(stream)?;
+
+        let timeout = Some(Duration::new(1, 0));
+        stream.set_read_timeout(timeout)?;
+        stream.set_write_timeout(timeout)?;
+
         Ok(Socket { stream })
     }
 
@@ -37,6 +44,7 @@ impl Socket {
     }
 
     fn send(&self, request: Request) -> std::io::Result<Response> {
+
         println!("Request:");
         println!("{}", request.to_string()); // impl format
 

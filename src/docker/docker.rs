@@ -21,8 +21,14 @@ impl Docker {
 
     #[allow(dead_code)]
     pub fn get_containers(self) -> std::io::Result<Response> {
-        self.socket.get("/containers/json")
+        self.socket.get("/containers")
     }
+
+    pub fn get_container(self, name: String) -> std::io::Result<Response> {
+        let path = format!("/containers/{}/json", name);
+        self.socket.get(path.as_str())
+    }
+
 }
 
 fn can_access(socket: &Socket) -> std::io::Result<Response> {
